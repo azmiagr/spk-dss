@@ -139,6 +139,36 @@ Cek tabel yang sudah dibuat:
 mariadb -u root -p -e "USE \`spk-dss\`; SHOW TABLES;"
 ```
 
+## Menjalankan Aplikasi
+
+Pastikan virtual environment aktif:
+
+```bash
+source venv/bin/activate
+```
+
+Jalankan aplikasi:
+
+```bash
+python main.py
+```
+
+Aplikasi akan berjalan di:
+
+```txt
+http://127.0.0.1:5000
+```
+
+Endpoint yang bisa dicoba:
+
+```txt
+GET /
+GET /health
+GET /db-check
+```
+
+`/db-check` dipakai untuk memastikan aplikasi bisa terhubung ke MariaDB sesuai konfigurasi `.env`.
+
 ## Membuat Migration Baru
 
 Setiap kali model SQLAlchemy berubah, buat revision baru:
