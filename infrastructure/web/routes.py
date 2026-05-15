@@ -8,6 +8,9 @@ from infrastructure.web.controllers.display_controller import create_display_blu
 from infrastructure.web.controllers.laptop_brand_controller import (
     create_laptop_brand_blueprint,
 )
+from infrastructure.web.controllers.laptop_type_controller import (
+    create_laptop_type_blueprint,
+)
 from infrastructure.web.controllers.processor_controller import (
     create_processor_blueprint,
 )
@@ -37,5 +40,9 @@ def register_api_v1_routes(app: Flask, session_factory) -> None:
     )
     app.register_blueprint(
         create_laptop_brand_blueprint(session_factory),
+        url_prefix=API_V1_PREFIX,
+    )
+    app.register_blueprint(
+        create_laptop_type_blueprint(session_factory),
         url_prefix=API_V1_PREFIX,
     )
