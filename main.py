@@ -6,10 +6,16 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
 from infrastructure.database.session import SessionLocal
+from infrastructure.web.routes import register_api_v1_routes
 
 
 def create_app() -> Flask:
     app = Flask(__name__)
+    app.json.sort_keys = False
+
+    session_factory = SessionLocal
+
+    register_api_v1_routes(app, session_factory)
 
     @app.get("/")
     def index():
@@ -26,7 +32,7 @@ def create_app() -> Flask:
 
     @app.get("/db-check")
     def db_check():
-        session = SessionLocal()
+        session = session_factory()
 
         try:
             session.execute(text("SELECT 1"))
