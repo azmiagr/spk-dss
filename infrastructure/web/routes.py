@@ -18,6 +18,7 @@ from infrastructure.web.controllers.processor_controller import (
     create_processor_blueprint,
 )
 from infrastructure.web.controllers.storage_controller import create_storage_blueprint
+from infrastructure.web.controllers.laptop_controller import create_laptop_blueprint
 from infrastructure.web.controllers.vga_brand_controller import (
     create_vga_brand_blueprint,
 )
@@ -61,5 +62,9 @@ def register_api_v1_routes(app: Flask, session_factory) -> None:
     )
     app.register_blueprint(
         create_storage_blueprint(session_factory),
+        url_prefix=API_V1_PREFIX,
+    )
+    app.register_blueprint(
+        create_laptop_blueprint(session_factory),
         url_prefix=API_V1_PREFIX,
     )
