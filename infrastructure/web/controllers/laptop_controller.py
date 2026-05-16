@@ -1,0 +1,44 @@
+# pyrefly: ignore [missing-import]
+from flask import Blueprint
+# pyrefly: ignore [missing-import]
+from sqlalchemy.exc import SQLAlchemyError
+
+from application.use_cases.get_laptops import GetLaptopsUseCase
+from helpers.response import http_response
+from infrastructure.database.repositories.laptop_repository_impl import (
+    SqlAlchemyLaptopRepository,
+)
+
+
+def create_laptop_blueprint(session_factory):
+    laptop_blueprint = Blueprint("laptop", __name__)
+
+    @laptop_blueprint.get("/laptops")
+    def get_laptops():
+        session = session_factory()
+
+        try:
+            laptop_repository = SqlAlchemyLaptopRepository(session)
+            get_laptops_use_case = GetLaptopsUseCase(laptop_repository)
+
+            data = get_laptops_use_case.execute()
+
+            return http_response(
+                code=200,
+                is_success=True,
+                message="success to get laptops",
+                data=data,
+            )
+        except SQLAlchemyError as exc:
+            return http_response(
+                code=500,
+                is_success=False,
+                message="failed to get laptops",
+                data={
+                    "detail": str(exc),
+                },
+            )
+        finally:
+            session.close()
+
+    return laptop_blueprint
