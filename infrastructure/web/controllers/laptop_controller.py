@@ -3,6 +3,7 @@ from flask import Blueprint, request
 # pyrefly: ignore [missing-import]
 from sqlalchemy.exc import SQLAlchemyError
 
+from application.use_cases.get_laptop_presets import GetLaptopPresetsUseCase
 from application.use_cases.get_laptop_recommendations import GetLaptopRecommendationsUseCase
 from application.use_cases.get_laptops import GetLaptopsUseCase
 from helpers.response import http_response
@@ -101,6 +102,33 @@ def create_laptop_blueprint(session_factory):
                 code=500,
                 is_success=False,
                 message="failed to get laptop recommendations",
+                data={"detail": str(exc)},
+            )
+        finally:
+            session.close()
+
+    @laptop_blueprint.get("/laptops/presets")
+    def get_laptop_presets():
+        session = session_factory()
+        top = request.args.get("top", 3, type=int)
+
+        try:
+            laptop_repository = SqlAlchemyLaptopRepository(session)
+            use_case = GetLaptopPresetsUseCase(laptop_repository)
+
+            data = use_case.execute(top=top)
+
+            return http_response(
+                code=200,
+                is_success=True,
+                message="success to get laptop presets",
+                data=data,
+            )
+        except SQLAlchemyError as exc:
+            return http_response(
+                code=500,
+                is_success=False,
+                message="failed to get laptop presets",
                 data={"detail": str(exc)},
             )
         finally:
