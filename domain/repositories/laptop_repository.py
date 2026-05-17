@@ -7,3 +7,6 @@ class LaptopRepository(Protocol):
 
     def count(self, filters: Optional[Dict] = None) -> int:
         ...
+
+    def get_all_for_dss(self, filters: Optional[Dict] = None) -> List[Any]:
+        ...
