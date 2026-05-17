@@ -1,9 +1,9 @@
-from typing import Any, List, Protocol
+from typing import Any, Dict, List, Optional, Protocol
 
 
 class LaptopRepository(Protocol):
-    def get_all(self, page: int, per_page: int) -> List[Any]:
+    def get_all(self, page: int, per_page: int, filters: Optional[Dict] = None) -> List[Any]:
         ...
 
-    def count(self) -> int:
+    def count(self, filters: Optional[Dict] = None) -> int:
         ...
