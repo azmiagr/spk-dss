@@ -1,5 +1,5 @@
 # pyrefly: ignore [missing-import]
-from flask import Blueprint
+from flask import Blueprint, request
 # pyrefly: ignore [missing-import]
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -16,12 +16,13 @@ def create_laptop_blueprint(session_factory):
     @laptop_blueprint.get("/laptops")
     def get_laptops():
         session = session_factory()
+        page = request.args.get("page", 1, type=int)
 
         try:
             laptop_repository = SqlAlchemyLaptopRepository(session)
             get_laptops_use_case = GetLaptopsUseCase(laptop_repository)
 
-            data = get_laptops_use_case.execute()
+            data = get_laptops_use_case.execute(page=page)
 
             return http_response(
                 code=200,
