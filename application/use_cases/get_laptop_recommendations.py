@@ -54,10 +54,12 @@ class GetLaptopRecommendationsUseCase:
     def __init__(self, laptop_repository: LaptopRepository):
         self.laptop_repository = laptop_repository
 
-    def execute(self, profile: str, page: int = 1, filters: Optional[Dict] = None) -> dict:
+    def execute(self, profile: str, page: int = 1, filters: Optional[Dict] = None, order: str = "desc") -> dict:
         weights = PROFILES.get(profile)
         if weights is None:
             raise ValueError(f"Unknown profile: {profile}")
+        if order not in ("asc", "desc"):
+            raise ValueError(f"Invalid order: {order}. Must be 'asc' or 'desc'")
 
         laptops = self.laptop_repository.get_all_for_dss(filters=filters)
 
@@ -81,6 +83,8 @@ class GetLaptopRecommendationsUseCase:
         ]
 
         ranked = SAWMethod().calculate(criteria, alternatives)
+        if order == "asc":
+            ranked = list(reversed(ranked))
 
         total = len(ranked)
         start = (page - 1) * PER_PAGE
@@ -125,4 +129,5 @@ class GetLaptopRecommendationsUseCase:
             "total": total,
             "total_pages": -(-total // PER_PAGE),
             "profile": profile,
+            "order": order,
         }
