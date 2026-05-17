@@ -1,6 +1,8 @@
 # pyrefly: ignore [missing-import]
 from flask import Flask, jsonify
 # pyrefly: ignore [missing-import]
+from flask_cors import CORS
+# pyrefly: ignore [missing-import]
 from sqlalchemy import text
 # pyrefly: ignore [missing-import]
 from sqlalchemy.exc import SQLAlchemyError
@@ -12,6 +14,8 @@ from infrastructure.web.routes import register_api_v1_routes
 def create_app() -> Flask:
     app = Flask(__name__)
     app.json.sort_keys = False
+
+    CORS(app)
 
     session_factory = SessionLocal
 
