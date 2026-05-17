@@ -59,6 +59,7 @@ def create_laptop_blueprint(session_factory):
         session = session_factory()
         page = request.args.get("page", 1, type=int)
         profile = request.args.get("profile", type=str)
+        order = request.args.get("order", "desc", type=str)
 
         if not profile:
             return http_response(
@@ -82,7 +83,7 @@ def create_laptop_blueprint(session_factory):
             laptop_repository = SqlAlchemyLaptopRepository(session)
             use_case = GetLaptopRecommendationsUseCase(laptop_repository)
 
-            data = use_case.execute(profile=profile, page=page, filters=filters)
+            data = use_case.execute(profile=profile, page=page, filters=filters, order=order)
 
             return http_response(
                 code=200,
