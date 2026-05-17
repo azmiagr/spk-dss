@@ -53,3 +53,9 @@ class SqlAlchemyLaptopRepository(LaptopRepository):
         inner = self._apply_filters(inner, filters)
         stmt = select(func.count()).select_from(inner.subquery())
         return self.session.execute(stmt).scalar()
+
+    def get_all_for_dss(self, filters: dict = None) -> list[LaptopModel]:
+        stmt = select(LaptopModel).distinct()
+        stmt = self._apply_filters(stmt, filters)
+        stmt = stmt.order_by(LaptopModel.id)
+        return self.session.execute(stmt).scalars().all()
