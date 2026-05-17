@@ -1,3 +1,5 @@
+from typing import Dict, Optional
+
 from domain.repositories.laptop_repository import LaptopRepository
 
 PER_PAGE = 10
@@ -7,9 +9,9 @@ class GetLaptopsUseCase:
     def __init__(self, laptop_repository: LaptopRepository):
         self.laptop_repository = laptop_repository
 
-    def execute(self, page: int = 1) -> dict:
-        total = self.laptop_repository.count()
-        laptops = self.laptop_repository.get_all(page=page, per_page=PER_PAGE)
+    def execute(self, page: int = 1, filters: Optional[Dict] = None) -> dict:
+        total = self.laptop_repository.count(filters=filters)
+        laptops = self.laptop_repository.get_all(page=page, per_page=PER_PAGE, filters=filters)
 
         return {
             "items": [
