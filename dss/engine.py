@@ -8,23 +8,9 @@ class Criterion:
         self.weight = weight
 
 class SAWMethod:
-    """
-    Simple Additive Weighting (SAW) Method.
-    Metode ini bekerja secara dinamis dengan menerima kriteria dan data alternatif.
-    """
     
     def calculate(self, criteria: List[Criterion], alternatives: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """
-        Menghitung nilai preferensi untuk setiap alternatif.
-        
-        Args:
-            criteria: List objek Criterion yang mendefinisikan kode, tipe (benefit/cost), dan bobot.
-            alternatives: List of dictionary, dimana tiap dict berisi id alternatif dan nilai untuk setiap criteria_code.
-                          Contoh: {"id": 1, "name": "Laptop A", "C1": 80, "C2": 5000000}
-        
-        Returns:
-            List of dictionary yang sudah diurutkan berdasarkan skor akhir tertinggi.
-        """
+
         if not alternatives or not criteria:
             return []
 
@@ -48,6 +34,7 @@ class SAWMethod:
         for alt in alternatives:
             score = 0.0
             normalized_data = {}
+            criteria_scores = {}
             
             for c in criteria:
                 val = alt.get(c.code, 0)
@@ -64,12 +51,16 @@ class SAWMethod:
                 normalized_data[c.code] = norm_val
                 
                 # Mengalikan dengan bobot yang sudah dinormalisasi
-                score += norm_val * normalized_weights[c.code]
+                weighted_score = norm_val * normalized_weights[c.code]
+                criteria_scores[c.code] = weighted_score
+                score += weighted_score
             
             # Menyimpan hasil
             result_item = alt.copy()
             result_item["normalized"] = normalized_data
+            result_item["criteria_scores"] = criteria_scores
             result_item["score"] = score
+            result_item["price"] = alt.get("price", alt.get("C4", 0))
             results.append(result_item)
             
         # 5. Perankingan (Sort descending berdasarkan skor)
